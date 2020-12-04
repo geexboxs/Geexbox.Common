@@ -1,6 +1,6 @@
-# Geexbox.Logging
+# Geexbox.Common
 
-[![NuGet RollingFile](https://img.shields.io/nuget/v/Geexbox.Common.svg)](https://www.nuget.org/packages/Geexbox.Common/)
+[![NuGet Common](https://img.shields.io/nuget/v/Geexbox.Common.svg)](https://www.nuget.org/packages/Geexbox.Common/)
 
 ## Geexbox.Common
 
@@ -18,3 +18,4 @@ or using the .NET CLI:
 
 ```powershell
 dotnet add package Geexbox.Common
+```
