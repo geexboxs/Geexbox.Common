@@ -2,9 +2,13 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
+using System.Text;
+
 using Geexbox.Common;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
@@ -81,27 +85,28 @@ namespace Geexbox.Extensions
         /// <param name="base64WithWebHeader"></param>
         /// <param name="fileExt"></param>
         /// <returns></returns>
-        public static (string base64, string ext) DataUrlToBase64WithExt(this string base64WithWebHeader)
+        public static (string base64, string mime) DataUrlToBase64WithExt(this string base64WithWebHeader)
         {
-            var splitIndex = base64WithWebHeader.IndexOf(",");
-            var fileExt = "";
-            if (splitIndex <= 0)
+            try
             {
-                throw new Exception("未找到Base64的Web Header");
+                var splitted = base64WithWebHeader.Split(new[] { ',' }, 2);
+                var webHeader = splitted[0];
+                var base64 = splitted[1];
+                var mime = webHeader.Split(new[] { ':', ';' })[1];
+                return (base64, mime);
             }
-            var webHeader = base64WithWebHeader.Split(new[] { ',' }, 2)[0];
-            if (webHeader.Contains("jpeg"))
+            catch (Exception e)
             {
-                fileExt = "jpeg";
-                return (base64WithWebHeader.Substring(splitIndex + 1), fileExt);
+                throw new Exception("不支持的DataUrl", e);
             }
-            if (webHeader.Contains("png"))
-            {
-                fileExt = "png";
-                return (base64WithWebHeader.Substring(splitIndex + 1), fileExt);
-            }
-            throw new Exception("不支持的Base64文件格式");
+
         }
+
+        public static string ToBase64(this string str, Encoding encoding = null)
+        {
+            return Convert.ToBase64String((encoding ?? Encoding.UTF8).GetBytes(str));
+        }
+
         public static JsonSerializerSettings DefaultSerializeSettings { get; set; } = new JsonSerializerSettings()
         {
             ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
